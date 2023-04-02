@@ -11,13 +11,21 @@ app.get("/", (req, res) => {
 });
 
 app.post("/auth/login", (req, res) => {
-  console.log(req.body);
+  console.log(req.body.email);
+  const token = jwt.sign(
+    {
+      email: req.body.email,
+      fullName: "Вася Пупкин",
+    },
+    "secret123"
+  );
   res.json({
     success: true,
+    token,
   });
 });
 
-// отправляем логи и пароль? затем обрабатываем их
+// отправляем логи и пароль, затем обрабатываем их
 
 // запускаем приложение
 app.listen(4444, (err) => {
