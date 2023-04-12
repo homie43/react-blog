@@ -5,6 +5,8 @@ import { validationResult } from "express-validator";
 
 import { registerValidation } from "./validations/auth.js";
 
+import UserModel from "./models/User.js";
+
 mongoose
   .connect(
     "mongodb+srv://admin:wwwwww@cluster0.k8gbj8e.mongodb.net/?retryWrites=true&w=majority"
@@ -23,6 +25,13 @@ app.post("/auth/register", registerValidation, (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json(errors.array());
   }
+
+  const doc = new UserModel({
+    email: req.body.email,
+    fullName: req.body.fullName,
+    avatarUrl: req.body.avatarUrl,
+    passwordHash: req.body.passwordHash,
+  });
 
   res.json({
     success: true,
