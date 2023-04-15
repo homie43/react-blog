@@ -5,13 +5,17 @@ const UserSchema = new mongoose.Schema(
     fullName: {
       type: String,
       required: true,
+    },
+    email: {
+      type: String,
+      required: true,
       unique: true, // почта юзера должжна быть уникальной
     },
     passwordHash: {
       type: String,
       required: true,
     },
-    avatarUser: String, // если это свойство не обзятально, то это не объект, как выше
+    avatarUrl: String, // если это свойство не обзятально, то это не объект, как выше
   },
   {
     timestamps: true,
