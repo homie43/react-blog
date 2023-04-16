@@ -31,14 +31,14 @@ app.post("/auth/register", registerValidation, async (req, res) => {
     // шифруем пароль с помощью bcrypt
     const password = req.body.password;
     const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
+    const hash = await bcrypt.hash(password, salt);
 
     // создаем документ
     const doc = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,
       avatarUrl: req.body.avatarUrl,
-      passwordHash, // используем зашифрованный пароль
+      passwordHash: hash, // используем зашифрованный пароль
     });
 
     const user = await doc.save();
@@ -54,8 +54,10 @@ app.post("/auth/register", registerValidation, async (req, res) => {
       }
     );
 
+    const { passwordHash, ...userData } = user._doc; // убираем пароль из ответа
+
     res.json({
-      ...user,
+      ...userData,
       token,
     });
     // возвращается только один ответ, более быть не может
