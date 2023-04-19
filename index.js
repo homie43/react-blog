@@ -20,6 +20,52 @@ const app = express();
 // комманда позволяет читать json который приходит в запросах
 app.use(express.json());
 
+// авторизация
+app.post("/auth/login", async (req, res) => {
+  try {
+    const user = await UserModel.findOne({ email: req.body.email }); // ищем юзера в бд
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Пользователь не найден", // то что пользоваетль не найден писать не надо
+      });
+    }
+
+    const isValidPass = await bcrypt.compare(
+      req.body.password,
+      user._doc.passwordHash
+    );
+
+    if (!isValidPass) {
+      return res.status(404).json({
+        message: "Неверный логин или пароль", // то что пользоваетль не найден писать не надо
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        _id: user._id, // что шифруем
+      },
+      "secret123", // ключ с помощью которого шифруется токен
+      {
+        expiresIn: "30d", // срок жизни токена
+      }
+    );
+
+    const { passwordHash, ...userData } = user._doc; // убираем пароль из ответа
+
+    res.json({
+      ...userData,
+      token,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Не удалось авторизоваться",
+    });
+  }
+});
+
 app.post("/auth/register", registerValidation, async (req, res) => {
   try {
     const errors = validationResult(req);
