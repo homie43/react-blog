@@ -7,6 +7,7 @@ import { validationResult } from "express-validator";
 import { registerValidation } from "./validations/auth.js";
 
 import UserModel from "./models/User.js";
+import checkAuth from "./utils/checkAuth.js";
 
 mongoose
   .connect(
@@ -66,6 +67,7 @@ app.post("/auth/login", async (req, res) => {
   }
 });
 
+// регистрация
 app.post("/auth/register", registerValidation, async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -115,7 +117,24 @@ app.post("/auth/register", registerValidation, async (req, res) => {
   }
 });
 
-// отправляем логи и пароль, затем обрабатываем их
+// получение информации о себе
+// проверка авторизован я или нет
+app.get("/auth/me", checkAuth, async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Такого пользователя нет",
+      });
+    }
+
+    const { passwordHash, ...userData } = user._doc; // убираем пароль из ответа
+    res.json({
+      userData,
+    });
+  } catch (error) {}
+});
 
 // запускаем приложение
 app.listen(4444, (err) => {
