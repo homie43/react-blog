@@ -3,7 +3,7 @@ import PostModel from "../models/Post.js";
 // получение постов
 export const getAll = async (req, res) => {
   try {
-    const posts = await PostModel.find();
+    const posts = await PostModel.find().populate("user").exec();
 
     res.json(posts);
   } catch (err) {
