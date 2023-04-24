@@ -29,7 +29,7 @@ app.post("/auth/login", loginValidation, login);
 app.get("/auth/me", checkAuth, getMe);
 
 // посты
-// app.get("/posts", PostController.getAll);
+app.get("/posts", PostController.getAll);
 // app.get("/posts/:id", PostController.getOne);
 app.post("/posts", checkAuth, postCreateValidation, PostController.create);
 // app.delete("/posts", PostController.removePost);
