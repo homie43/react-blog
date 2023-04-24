@@ -15,7 +15,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    avatarUrl: String, // если это свойство не обзятально, то это не объект, как выше
+    avatarUrl: String, // если это свойство не обязательно, то это не объект, как выше
   },
   {
     timestamps: true,
