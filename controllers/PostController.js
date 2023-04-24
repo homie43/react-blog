@@ -14,6 +14,46 @@ export const getAll = async (req, res) => {
   }
 };
 
+// получение одного поста
+export const getOne = async (req, res) => {
+  try {
+    const postId = req.params.id;
+
+    PostModel.findOneAndUpdate(
+      {
+        _id: postId, // по какому парраметру ищем
+      },
+      {
+        $inc: { viewsCount: 1 }, // что делаем - увеличиваем проссмотр на 1
+      },
+      {
+        returnDocument: "after", // после обновления хотим вернуть акьуальный документ
+      },
+      (err, doc) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({
+            message: "Не удалось вернуть пост",
+          });
+        }
+
+        if (!doc) {
+          return res.status(404).json({
+            message: "Пост не найден",
+          });
+        }
+
+        res.json(doc);
+      }
+    ).populate("user");
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось получить пост",
+    });
+  }
+};
+
 // создание поста
 export const create = async (req, res) => {
   try {
