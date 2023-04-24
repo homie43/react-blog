@@ -3,7 +3,9 @@ import mongoose from "mongoose";
 
 import { registerValidation, loginValidation } from "./validations.js";
 import checkAuth from "./utils/checkAuth.js";
+
 import { getMe, login, register } from "./controllers/UserController.js";
+// import PostController from "./controllers/PostController.js";
 
 mongoose
   .connect(
@@ -17,14 +19,17 @@ const app = express();
 // комманда позволяет читать json который приходит в запросах
 app.use(express.json());
 
-// регистрация
+// юзеры
 app.post("/auth/register", registerValidation, register);
-
-// авторизация
 app.post("/auth/login", loginValidation, login);
-
-// проверка наличия пользователя
 app.get("/auth/me", checkAuth, getMe);
+
+// посты
+// app.get("/posts", PostController.getAll);
+// app.get("/posts/:id", PostController.getOne);
+// app.post("/posts", PostController.createPost);
+// app.delete("/posts", PostController.removePost);
+// app.patch("/posts", PostController.updatePost);
 
 // запускаем приложение
 app.listen(4444, (err) => {
