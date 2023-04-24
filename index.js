@@ -1,11 +1,15 @@
 import express from "express";
 import mongoose from "mongoose";
 
-import { registerValidation, loginValidation } from "./validations.js";
+import {
+  registerValidation,
+  loginValidation,
+  postCreateValidation,
+} from "./validations.js";
 import checkAuth from "./utils/checkAuth.js";
 
 import { getMe, login, register } from "./controllers/UserController.js";
-// import PostController from "./controllers/PostController.js";
+import * as PostController from "./controllers/PostController.js";
 
 mongoose
   .connect(
@@ -27,7 +31,7 @@ app.get("/auth/me", checkAuth, getMe);
 // посты
 // app.get("/posts", PostController.getAll);
 // app.get("/posts/:id", PostController.getOne);
-// app.post("/posts", PostController.createPost);
+app.post("/posts", checkAuth, postCreateValidation, PostController.create);
 // app.delete("/posts", PostController.removePost);
 // app.patch("/posts", PostController.updatePost);
 
