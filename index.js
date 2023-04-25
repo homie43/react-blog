@@ -32,7 +32,7 @@ app.get("/auth/me", checkAuth, getMe);
 app.get("/posts", PostController.getAll);
 app.get("/posts/:id", PostController.getOne);
 app.post("/posts", checkAuth, postCreateValidation, PostController.create);
-// app.delete("/posts", PostController.removePost);
+app.delete("/posts/:id", checkAuth, PostController.remove);
 // app.patch("/posts", PostController.updatePost);
 
 // запускаем приложение
