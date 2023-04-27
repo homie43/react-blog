@@ -35,6 +35,7 @@ const upload = multer({ storage });
 
 // комманда позволяет читать json который приходит в запросах
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 
 // юзеры
 app.post("/auth/register", registerValidation, register);
