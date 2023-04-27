@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import multer from "multer";
 
 import {
   registerValidation,
@@ -20,6 +21,18 @@ mongoose
 
 const app = express();
 
+// хранилище для файлов(картинок)
+const storage = multer.diskStorage({
+  destination: (_, __, cb) => {
+    cb(null, "uploads");
+  },
+  filename: (_, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage });
+
 // комманда позволяет читать json который приходит в запросах
 app.use(express.json());
 
@@ -27,6 +40,12 @@ app.use(express.json());
 app.post("/auth/register", registerValidation, register);
 app.post("/auth/login", loginValidation, login);
 app.get("/auth/me", checkAuth, getMe);
+
+app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
+  res.json({
+    url: `/uploads/${req.file.originalname}`,
+  });
+});
 
 // посты
 app.get("/posts", PostController.getAll);
