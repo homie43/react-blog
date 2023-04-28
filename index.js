@@ -2,20 +2,15 @@ import express from "express";
 import mongoose from "mongoose";
 import multer from "multer";
 
-import {
-  registerValidation,
-  loginValidation,
-  postCreateValidation,
-} from "./validations.js";
+import { registerValidation, loginValidation, postCreateValidation } from "./validations.js";
 import checkAuth from "./utils/checkAuth.js";
 
 import { getMe, login, register } from "./controllers/UserController.js";
 import * as PostController from "./controllers/PostController.js";
+import handleValidationErrors from "./utils/handleValidationErrors.js";
 
 mongoose
-  .connect(
-    "mongodb+srv://admin:wwwwww@cluster0.k8gbj8e.mongodb.net/blog?retryWrites=true&w=majority"
-  )
+  .connect("mongodb+srv://admin:wwwwww@cluster0.k8gbj8e.mongodb.net/blog?retryWrites=true&w=majority")
   .then(() => console.log("DB OK"))
   .catch((err) => console.log("DB error", err));
 
@@ -38,8 +33,8 @@ app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
 // юзеры
-app.post("/auth/register", registerValidation, register);
-app.post("/auth/login", loginValidation, login);
+app.post("/auth/register", registerValidation, handleValidationErrors, register);
+app.post("/auth/login", loginValidation, handleValidationErrors, login);
 app.get("/auth/me", checkAuth, getMe);
 
 app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
@@ -51,9 +46,9 @@ app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
 // посты
 app.get("/posts", PostController.getAll);
 app.get("/posts/:id", PostController.getOne);
-app.post("/posts", checkAuth, postCreateValidation, PostController.create);
+app.post("/posts", checkAuth, postCreateValidation, handleValidationErrors, PostController.create);
 app.delete("/posts/:id", checkAuth, PostController.remove);
-app.patch("/posts/:id", checkAuth, PostController.update);
+app.patch("/posts/:id", checkAuth, postCreateValidation, handleValidationErrors, PostController.update);
 
 // запускаем приложение
 app.listen(4444, (err) => {
