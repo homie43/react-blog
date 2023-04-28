@@ -3,11 +3,10 @@ import mongoose from "mongoose";
 import multer from "multer";
 
 import { registerValidation, loginValidation, postCreateValidation } from "./validations.js";
-import checkAuth from "./utils/checkAuth.js";
 
-import { getMe, login, register } from "./controllers/UserController.js";
-import * as PostController from "./controllers/PostController.js";
-import handleValidationErrors from "./utils/handleValidationErrors.js";
+import { checkAuth, handleValidationErrors } from "./utils/index.js";
+
+import { UserController, PostController } from "./controllers/index.js";
 
 mongoose
   .connect("mongodb+srv://admin:wwwwww@cluster0.k8gbj8e.mongodb.net/blog?retryWrites=true&w=majority")
@@ -33,9 +32,9 @@ app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
 // юзеры
-app.post("/auth/register", registerValidation, handleValidationErrors, register);
-app.post("/auth/login", loginValidation, handleValidationErrors, login);
-app.get("/auth/me", checkAuth, getMe);
+app.post("/auth/register", registerValidation, handleValidationErrors, UserController.register);
+app.post("/auth/login", loginValidation, handleValidationErrors, UserController.login);
+app.get("/auth/me", checkAuth, UserController.getMe);
 
 app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
   res.json({
